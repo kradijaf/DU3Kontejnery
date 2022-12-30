@@ -1,13 +1,48 @@
 # dodělat:
-#   kontrola vstupů - existence souborů (nepokračovat, pokud len = 0), práva apod., správnost adresních bodů
-#   práce se vstupy - strip adres apod, '-' ve WGS souřadnicích?, ukončit, pokud existuje 0 korektních kontejnerů nebo adres, vypsat
-#   zadání - další požadavky
+#   parametry programu
+#   docstringy
 # očekává korektní adresní body, protože bonus chce nejbližší kontejner pro VŠECHNY adresy
 # zanedbává případ kdy adresní bod má více stejně vzdálených kontejnerů s přesností na metry, bere první takový
 
 from json import load, dump
 from pyproj import Transformer
 from math import sqrt
+
+def fileControl(addressFile : str, containerFile : str, outputFile : str) -> None:
+    try:
+        with open(addressFile, encoding= 'utf-8') as a,\
+        open(containerFile, encoding='utf-8') as c,\
+        open(outputFile, 'w' ,encoding = 'utf-8') as o:
+            try:
+                aJSON = load(a)
+                cJSON = load(c)
+                if len(aJSON['features']) == 0 or len(cJSON['features']) == 0:
+                    print('Vstupní soubor neobsahuje žádné záznamy.')
+                    return False
+                for addressPoint in aJSON['features']:
+                    try:
+                        tmp = addressPoint['properties']['addr:street'][0]
+                        tmp = float(addressPoint['properties']['addr:housenumber'][0])
+                        for i in addressPoint['geometry']['coordinates']:
+                            tmp = int(i)
+                            if '-' in str(i):
+                                raise ValueError
+                    except Exception:
+                        print('Chyba v adresním bodě s identifikátorem: ' + str(addressPoint['properties']['@id']) + '.')
+                        return False
+            except Exception as e:
+                print(f'Neočekávaná chyba ve vstupních souborech: {e}.')
+                return False
+    except FileNotFoundError as e:
+        print(f'Vstupní soubor neexistuje: {e}.')
+    except PermissionError as e:
+        print(f'Program nemá právo pracovat se vstupním souborem: {e}.')
+    except OSError as e:
+        print(f'Neočekávaná chyba vyvolaná Vaším počítačem: {e}.')
+    except Exception as e:
+        print(f'Neočekávaná neznámá chyba: {e}.')
+    else:
+        return True
 
 def wgsToSjtsk(wgsCoords : list) -> tuple:
     wgs2sjtsk = Transformer.from_crs(4326, 5514, always_xy= True)
@@ -27,40 +62,41 @@ def inputProcessing(addressFile : str, containerFile : str, outputFile : str):
         privateContainers = []
         publicContainers = []
         cFeaturesLen = len(cJSON['features'])
+
         for container in cJSON['features']:
             try:
-                tmp = [int(i) for i in container['geometry']['coordinates']]
                 tmp = float(container['properties']['ID'])
                 tmp = container['properties']['STATIONNAME'][0]
-            except BaseException:
+                for i in container['geometry']['coordinates']:
+                    tmp = int(i)
+                    if '-' not in str(i):
+                        raise ValueError
+            except Exception:
                 pass
             else:
                 if container['properties']['PRISTUP'] == 'obyvatelům domu':
-                    privateContainers.append({'coordinates' : container['geometry']['coordinates'],
+                    privateContainers.append({'coordinates' : [float(str(i).replace(' ', '')) for i in container['geometry']['coordinates']],
                                               'ID' : container['properties']['ID'],
                                               'STATIONNAME' : container['properties']['STATIONNAME']})
                 elif container['properties']['PRISTUP'] == 'volně':
-                    publicContainers.append({'coordinates' : container['geometry']['coordinates'],
+                    publicContainers.append({'coordinates' : [float(str(i).replace(' ', '')) for i in container['geometry']['coordinates']],
                                               'ID' : container['properties']['ID'],
                                               'STATIONNAME' : container['properties']['STATIONNAME']})
+
+        privateContLen = len(privateContainers)
+        publicContLen = len(publicContainers)
+        if (privateContLen + publicContLen) == 0:
+            raise SystemExit('Neexistuje kontejner s korektními atributy, ukončení programu.')
 
         nearestDistances = []
         nearestAddresses = []
         addressPoints = aJSON['features']
+
         for addressPoint in addressPoints:
-            """try:
-                tmp = addressPoint['properties']['addr:street'][1]
-                tmp = float(addressPoint['properties']['addr:housenumber'][0])
-            except BaseException as e:
-                id = addressPoint['id']
-                print(f'V adresním bodě s identifikátorem: {id} nastala chyba: ', e)
-            else:"""
-
             distance = -1
-            address = addressPoint['properties']['addr:street'] + ' ' + str(addressPoint['properties']['addr:housenumber'])
-
+            address = (addressPoint['properties']['addr:street'] + ' ' + str(addressPoint['properties']['addr:housenumber'])).strip()
             for privateCntnr in privateContainers:
-                if privateCntnr['STATIONNAME'] == address:
+                if privateCntnr['STATIONNAME'].strip() == address:
                     distance = 0
                     addressPoint.update({'kontejner' : privateCntnr['ID']})
                     nearestAddresses.append(address)
@@ -68,7 +104,12 @@ def inputProcessing(addressFile : str, containerFile : str, outputFile : str):
                     break
                 
             if distance == -1:
-                SJTSK = wgsToSjtsk(addressPoint['geometry']['coordinates'])
+                if publicContLen == 0:
+                    ID = addressPoint['properties']['@id']
+                    raise SystemExit(f'Adresnímu bodu s identifikátorem {ID} nemohl být přiřazen kontejner,\
+ vstup neobsahuje veřejně přístupné kontejnery a pro adresu neexistuje soukromý kontejner. Ukončení programu.')
+
+                SJTSK = wgsToSjtsk([float(str(i).replace(' ', '')) for i in addressPoint['geometry']['coordinates']])
                 currentDistances = []
                 currentIDs = []
 
@@ -77,6 +118,8 @@ def inputProcessing(addressFile : str, containerFile : str, outputFile : str):
                     currentIDs.append(publicCntnr['ID'])
 
                 minDist = min(currentDistances)
+                if minDist > 10000:
+                    raise SystemExit('Překročena prahová vzdálenost nejbližšího kontejneru 10 km, ukončení programu.')
                 nearestDistances.append(minDist)
                 nearestAddresses.append(address)
                 addressPoint.update({'kontejner' : currentIDs[currentDistances.index(minDist)]})
@@ -134,5 +177,6 @@ def statistics(distances : list, addresses : list) -> None:
     printMax(max, addresses)
     Median(distances, length)
 
-dists, addrs = inputProcessing('DU3Kontejnery\\adresyShort.geojson', 'DU3Kontejnery\\kontejneryShort.geojson', 'DU3Kontejnery\\adresy_kontejnery.geojson')
-statistics(dists, addrs)
+if fileControl('DU3Kontejnery\\adresyShort.geojson', 'DU3Kontejnery\\kontejneryShort.geojson', 'DU3Kontejnery\\adresy_kontejnery.geojson'):
+    dists, addrs = inputProcessing('DU3Kontejnery\\adresyShort.geojson', 'DU3Kontejnery\\kontejneryShort.geojson', 'DU3Kontejnery\\adresy_kontejnery.geojson')
+    statistics(dists, addrs)
