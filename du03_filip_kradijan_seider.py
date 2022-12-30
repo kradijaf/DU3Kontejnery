@@ -1,5 +1,4 @@
 # dodělat:
-#   parametry programu
 #   docstringy
 # očekává korektní adresní body, protože bonus chce nejbližší kontejner pro VŠECHNY adresy
 # zanedbává případ kdy adresní bod má více stejně vzdálených kontejnerů s přesností na metry, bere první takový
@@ -7,6 +6,13 @@
 from json import load, dump
 from pyproj import Transformer
 from math import sqrt
+from argparse import ArgumentParser
+
+def parse() -> ArgumentParser.parse_args:
+    parser = ArgumentParser()
+    parser.add_argument('-a', action = 'store', nargs ='?', default = 'adresyShort.geojson', dest = 'addresses')
+    parser.add_argument('-k', action = 'store', nargs ='?', default = 'kontejneryShort.geojson', dest = 'containers')
+    return parser.parse_args()
 
 def fileControl(addressFile : str, containerFile : str, outputFile : str) -> None:
     try:
@@ -170,13 +176,13 @@ def statistics(distances : list, addresses : list) -> None:
     length = len(distances)
     if length == 1:
         print('Vzdálenost k nejbližšímu kontejneru byla vypočtena pouze pro 1 adresu, výsledek nelze s ničím porovnávat.')
-
     print(f'Průměrná vzdálenost k nejbližšímu kontejneru je {round(sum(distances) / len(distances))} m.')
 
     max = findMax(distances)
     printMax(max, addresses)
     Median(distances, length)
 
-if fileControl('DU3Kontejnery\\adresyShort.geojson', 'DU3Kontejnery\\kontejneryShort.geojson', 'DU3Kontejnery\\adresy_kontejnery.geojson'):
-    dists, addrs = inputProcessing('DU3Kontejnery\\adresyShort.geojson', 'DU3Kontejnery\\kontejneryShort.geojson', 'DU3Kontejnery\\adresy_kontejnery.geojson')
+args = parse()
+if fileControl(args.addresses, args.containers, 'adresy_kontejnery.geojson'):
+    dists, addrs = inputProcessing(args.addresses, args.containers, 'adresy_kontejnery.geojson')
     statistics(dists, addrs)
