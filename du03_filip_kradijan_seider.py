@@ -4,8 +4,8 @@ from math import sqrt
 from argparse import ArgumentParser
 
 def parse() -> ArgumentParser.parse_args:
-    """Do proměnné parser přiřazuje parametry programu, ty mohou být zadány v libovolném pořadí, pokud některé nejsou zadány, 
-    program je hledá ve složce, ve které se nachází."""
+    """Do proměnné typu ArgumentParser.parse_args přiřazuje parametry programu, ty mohou být zadány v 
+    libovolném pořadí, pokud některé nejsou zadány, program je hledá ve složce, ve které se nachází."""
     parser = ArgumentParser()
     parser.add_argument('-a', action = 'store', nargs ='?', default = 'adresy.geojson', dest = 'addresses')        # argument -a <názevSouboru> pro soubor s adresami
     parser.add_argument('-k', action = 'store', nargs ='?', default = 'kontejnery.geojson', dest = 'containers')       # argument -k <názevSouboru> pro soubor s kontejnery
@@ -51,18 +51,18 @@ def fileControl(addressFile : str, containerFile : str, outputFile : str) -> Non
         return True
 
 def wgsToSjtsk(wgsCoords : list) -> tuple:
-    """Převod souřadnic z WGS-84 do S-JTSK."""
+    """V n-tici vrací souřadnice převedené z WGS-84 do S-JTSK."""
     wgs2sjtsk = Transformer.from_crs(4326, 5514, always_xy= True)
     SJTSK = wgs2sjtsk.transform(wgsCoords[0], wgsCoords[1])
     return (SJTSK[0], SJTSK[1])
 
 def pointDistance(points1 : list, points2 : list) -> float:
-    """Výpočet 2D vzdálenosti bodů v S-JTSK pomocí Pythagorovy věty."""
+    """Vrací 2D vzdálenost bodů v S-JTSK vypočítanou pomocí Pythagorovy věty zaokrouhlenou na celé metry."""
     return round(sqrt((points1[0] - points2[0])**2 + (points1[1] - points2[1])**2))
 
 def inputProcessing(addressFile : str, containerFile : str, outputFile : str):
-    """Výpočet nejbližšího kontejneru pro každý adresní bod, výsledek ukládá do seznamu 
-    pro nejbližší vzdálenost a adresu, ke které se vztahuje."""
+    """Určuje nejbližší kontejneru pro každý adresní bod. Vrací seznamy s nejbližšími vzdálenostmi a 
+    adresami, ke kterým se vztahují."""
     with open(addressFile, encoding= 'utf-8') as a,\
     open(containerFile, encoding='utf-8') as c:
 
@@ -151,7 +151,7 @@ def strMaximums(maximums : list) -> str:
 
 def findMax(distList : list) -> list:
     """V závislosti na četnosti hodnoty do seznamu vloží odpovídají počet slovníků obsahující 
-    hodnotu maximální nejbližší vzdálenosti ke kontejneru a její index v seznamu."""
+    hodnotu maximální nejbližší vzdálenosti ke kontejneru a její index v seznamu vzdáleností."""
     max = [{'dist' : distList[0], 'indx' : 0}]
     for i in range(1, len(distList)):
         if distList[i] > max[0]['dist']:
