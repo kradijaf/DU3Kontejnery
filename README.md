@@ -1,3 +1,3 @@
 ## **Uživatelská dokumentace**
 
-Program vyžaduje 2 vstupy formátu .geoJSON - adresní body a kontejnery. Program lze spustit pomocí příkazového řádku pomocí příkazu `python <NázevProgramu.py> -a <názevVstupníhoSouboruAdres.geojson> -k <názevVstupníhoSouboruAdres.geojson>`. Parametr 
+Program vyžaduje 2 vstupy formátu .geoJSON - adresní body a kontejnery. Program lze spustit pomocí příkazového řádku pomocí příkazu `python <NázevProgramu.py> -a <názevVstupníhoSouboruAdres.geojson> -k <názevVstupníhoSouboruAdres.geojson>`. Parametr `-a` se vztahuje souboru s adresními body, parametr `-k` se vztahuje souboru s adresními body, mohou být uvedeny v libovoolném pořadí. Pokud tyto soubory nejsou uvedeny, program hledá ve své složce soubory `adresy.geojson` a `kontejnery.geojson`, pokud programu chybí některý ze vstupních souborů, nebude dále pokračovat.
