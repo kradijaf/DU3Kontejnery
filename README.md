@@ -15,3 +15,5 @@ Program ve své složce vytváří soubor `adresy_kontejnery.geojson` obsahujíc
 
 ## **Vývojářská dokumentace**
 
+Pokud zadané soubory existují, program má právo s nimi pracovat a veškéré adresní body jsou v pořádku, program počítá vzdálenosti k nejbližšímu kontejneru.
+> Program vyžaduje správnost všech adresních bodů, protože v části zadání "Přiřazení kontejnerů k adresám (2 b)" je uvedeno, že výstupní soubor má obsahovat veškeré adresní body a ke každému z nich přiřazený identifikátor  nejbližšího kontejneru.
