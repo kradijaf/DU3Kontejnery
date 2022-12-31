@@ -4,11 +4,11 @@ Program vyžaduje 2 vstupy formátu .geoJSON - adresní body a kontejnery. Progr
 
 Pokud se všemi adresními body lze pracovat a každému bodu přiřadit nejbližší kontejner, program to vykoná, v opačném případě bude ukončen. Program vypisuje následující informace o vstupních souborech:
 - počet načtených (=zpracovaných) adresních bodů
-- počet načtených kontejnerů a počet z nich zpracovaných zpracoval (= kolik záznamů použitelných pro výpočty soubor obsahoval)
+- počet načtených kontejnerů a počet z nich zpracovaných (= kolik záznamů použitelných pro výpočty soubor obsahoval)
 
 Dále program vypisuje následující statistiky o zpracovaných datech (veškeré vzdálenosti jsou zaokrouhleny na m):
 - průměrnou vzdálenost mezi adresním bodem a nejbližším kontejnerem
-- maximální vzdálenost k nejbližšímu kontejneru a adresu/adresy, pro které vzdálenost platí
+- maximální vzdálenost k nejbližšímu kontejneru a adresu/adresy, ke nimž se vzdálenost vztahuje
 - medián vzdálenosti mezi adresním bodem a nejbližším kontejnerem
 
-Program ve své složce vytváří soubor `adresy_kontejnery.geojson` obsahující všechny adresní body, k nim je přidán atribut `kontejner` obsahující hodnotu atributu `ID` nejbližšího kontejneru.
+Program ve své složce vytváří soubor `adresy_kontejnery.geojson` obsahující všechny adresní body a rozšířený o atribut `kontejner` obsahující hodnotu atributu `ID` nejbližšího kontejneru.
