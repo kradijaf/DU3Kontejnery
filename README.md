@@ -12,3 +12,6 @@ Dále program vypisuje následující statistiky o zpracovaných datech (vešker
 - medián vzdálenosti mezi adresním bodem a nejbližším kontejnerem
 
 Program ve své složce vytváří soubor `adresy_kontejnery.geojson` obsahující všechny adresní body a rozšířený o atribut `kontejner` obsahující hodnotu atributu `ID` nejbližšího kontejneru.
+
+## **Vývojářská dokumentace**
+
