@@ -7,8 +7,8 @@ def parse() -> ArgumentParser.parse_args:
     """Do proměnné parser přiřazuje parametry programu, ty mohou být zadány v libovolném pořadí, pokud některé nejsou zadány, 
     program je hledá ve složce, ve které se nachází."""
     parser = ArgumentParser()
-    parser.add_argument('-a', action = 'store', nargs ='?', default = 'adresyShort.geojson', dest = 'addresses')        # argument -a <názevSouboru> pro soubor s adresami
-    parser.add_argument('-k', action = 'store', nargs ='?', default = 'kontejneryShort.geojson', dest = 'containers')       # argument -k <názevSouboru> pro soubor s kontejnery
+    parser.add_argument('-a', action = 'store', nargs ='?', default = 'adresy.geojson', dest = 'addresses')        # argument -a <názevSouboru> pro soubor s adresami
+    parser.add_argument('-k', action = 'store', nargs ='?', default = 'kontejnery.geojson', dest = 'containers')       # argument -k <názevSouboru> pro soubor s kontejnery
     return parser.parse_args()
 
 def fileControl(addressFile : str, containerFile : str, outputFile : str) -> None:
