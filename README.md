@@ -1,1 +1,1 @@
-<p style="font-size:30px">Uživatelská dokumentace</p>
+<font size="5">Uživatelská dokumentace</font>
