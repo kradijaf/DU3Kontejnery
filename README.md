@@ -1,9 +1,9 @@
 ## **Uživatelská dokumentace**
 
 Program vyžaduje 2 vstupní soubory, adresní body a kontejnery.
-> adresní body:
+### adresní body:
 - **formát:** .GEOJSON
-- **souřadnicový systém:** WGS84 (EPSG: 4326)
+- **souřadnicový systém:** World Geodetic System 1984 (EPSG: 4326)
 - **požadované atributy:** `název ulice` (properties\addr:street), `domovní číslo` (properties\addr:housenumber), `souřadnice` (geometry\coordinates), `identifikátor` (properties\@id)
 
 Program lze díky funkce `parse` spustit přes příkazový řádek pomocí příkazu `python <NázevProgramu.py> -a <názevVstupníhoSouboruAdres.geojson> -k <názevVstupníhoSouboruAdres.geojson>`. Parametr `-a` se vztahuje k souboru s adresními body, parametr `-k` se vztahuje k souboru s kontejnery, parametry mohou být uvedeny v libovolném pořadí. Pokud tyto soubory nejsou uvedeny, program hledá ve své složce soubory `adresy.geojson` a `kontejnery.geojson`, pokud programu chybí některý ze vstupních souborů, nebude dále pokračovat.
