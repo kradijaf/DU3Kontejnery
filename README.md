@@ -30,10 +30,10 @@ Program je rozdělen do hlavních funkcí `inputProcessing()` a `statistics()`. 
 Funkce `inputProcessing()` začíná funkcí `fileControl()`, ta kontroluje následující:
 - zda zadané soubory existují
 - má-li program právo s nimi pracovat
-- jsou-li veškeré adresní body v pořádku (položky `ulice`, `domovní číslo` a `souřadnice`)
 
 Následně podfunkce `dataControl()` určuje správnost dat následovně:
 - zda v obou souborech s daty potřebnými pro výpočet existuje alespoň 1 záznam
+- jsou-li veškeré adresní body v pořádku (položky `ulice`, `domovní číslo` a `souřadnice`)
 > Program vyžaduje správnost všech adresních bodů, protože v části zadání "Přiřazení kontejnerů k adresám (2 b)" je uvedeno, že výstupní soubor má obsahovat veškeré adresní body a ke každému z nich přiřazený identifikátor nejbližšího kontejneru.
 Dále vybírá kontejnery, použitelné pro výpočet, rozděluje je do seznamů pro soukromé/veřejné. Pokud s žádným kontejnerem nelze pracovat (nesprávnost adresy a souřadnic), program je ukončen.  
 
