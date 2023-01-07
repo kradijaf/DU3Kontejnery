@@ -4,7 +4,7 @@ Program vyžaduje 2 vstupní soubory zastupující adresní body a kontejnery.
 ### Adresní body:
 - **formát:** .GEOJSON
 - **souřadnicový systém:** World Geodetic System 1984 (WGS84)(EPSG: 4326)
-- **požadované atributy:** `název ulice` (properties\addr:street), `domovní číslo` (properties\addr:housenumber), `souřadnice` (geometry\coordinates), `identifikátor` (properties\@id)
+- **požadované atributy:** `název ulice` (properties\addr:street), `domovní číslo` (properties\addr:housenumber), `souřadnice` (geometry\coordinates), `identifikátor` (properties\\@id)
 
 ### Kontejnery:
 - **formát:** .GEOJSON
@@ -36,6 +36,7 @@ Následně podfunkce `dataControl()` určuje správnost dat následovně:
 - zda v obou souborech s daty potřebnými pro výpočet existuje alespoň 1 záznam
 > Program vyžaduje správnost všech adresních bodů, protože v části zadání "Přiřazení kontejnerů k adresám (2 b)" je uvedeno, že výstupní soubor má obsahovat veškeré adresní body a ke každému z nich přiřazený identifikátor nejbližšího kontejneru.
 Dále vybírá kontejnery, použitelné pro výpočet, rozděluje je do seznamů pro soukromé/veřejné. Pokud s žádným kontejnerem nelze pracovat (nesprávnost adresy a souřadnic), program je ukončen.  
+
 Podfunkce `containerAllocation()` prochází adresy cyklem. Nejprve cyklem v seznamu soukromých kontejnerů hledá, zda pro adresu nějaký existuje, v takovém případě je výsledná vzdálenost 0. Pokud pro adresu soukromý kontejner neexistuje, cyklem hledá nejbližší veřejný. Pokud neexistují veřejné, pro výpočet použitelné, kontejnery, nastane ukončení programu. Případná vzdálenost adresa–kontejner je počítána ze souřadnic převedených do S–JTSK pomocí Pythagorovy věty a je zaokrouhlena na celé m. Pro adresu je vypočítána vzdálenost ke každému veřejnému kontejneru, dále program uchovává minimální hodnotu a odpovídající adresu do seznamů min. vzdáleností a adres. Pokud je minimální vzdálenost delší 10 km, nastane ukončení programu.  
 
 Podfunkce `outputs()` vytváří výstupní soubor `adresy_kontejnery` ve formátu `.GEOJSON`, ten obsahuje veškeré adresní body a v atributu "kontejner" ID nejbližšího kontejneru. Také vypisuje, kolik adresních bodů a kontejnerů bylo načteno a zpracováno.
